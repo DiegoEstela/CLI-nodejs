@@ -1,0 +1,87 @@
+steps:
+  - name: "bash"
+    id: "update_dependencies"
+    args: ["cp", "yarn.lock", "${_BASE_PATH}/yarn.lock"]
+
+  # Docker Build
+  - name: "gcr.io/cloud-builders/docker"
+    id: "docker_build"
+    dir: ${_BASE_PATH}
+    entrypoint: bash
+    args:
+    - -c
+    - docker build -t us-docker.pkg.dev/$PROJECT_ID/front-services/microfront-portal-${_FRONT_NAME}:latest --build-arg NPM_TOKEN=${_GITHUB_NPM_TOKEN} .
+    secretEnv: ['GITHUB_NPM_TOKEN']
+
+  # Docker push to Google Artifact Registry
+  - name: "gcr.io/cloud-builders/docker"
+    id: "docker_push"
+    args:
+      [
+        "push",
+        "us-docker.pkg.dev/$PROJECT_ID/front-services/microfront-portal-${_FRONT_NAME}:latest",
+      ]
+
+  # Deploy to Cloud Run
+  - name: google/cloud-sdk
+    id: "cloud_run_deploy"
+    args:
+      [
+        "gcloud",
+        "run",
+        "deploy",
+        "microfront-portal-${_FRONT_NAME}",
+        "--image=us-docker.pkg.dev/$PROJECT_ID/front-services/microfront-portal-${_FRONT_NAME}:latest",
+        "--region",
+        "${_SERVICE_REGION}",
+        "--platform",
+        "managed",
+        "--ingress",
+        "all",
+        "--allow-unauthenticated",
+        "--memory",
+        "${_SERVICE_MEMORY}",
+        "--service-account",
+        "front-services@$PROJECT_ID.iam.gserviceaccount.com",
+        "--min-instances",
+        "${_MIN_INSTANCES}",
+        "--concurrency",
+        "${_SERVICE_CONCURRENCY}",
+      ]
+
+  - name: google/cloud-sdk
+    id: "cloud_run_devs"
+    args:
+      [
+        "gcloud",
+        "run",
+        "services",
+        "add-iam-policy-binding",
+        "microfront-portal-${_FRONT_NAME}",
+        "--member",
+        "group:frontend.base@uma-health.com",
+        "--role",
+        "roles/run.developer",
+        "--platform",
+        "managed",
+        "--region",
+        "${_SERVICE_REGION}",
+      ]
+
+timeout: 900s
+
+tags: ["portal"]
+
+substitutions:
+  _SERVICE_REGION: us-central1
+  _FRONT_NAME: <%= name %>
+  _SERVICE_MEMORY: 256Mi
+  _SERVICE_CONCURRENCY: "80"
+  _MIN_INSTANCES: "1"
+  _BASE_PATH: "packages/<%= name %>"
+
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/uma-devops-prod/secrets/github-npm-read-token/versions/latest
+    env: 'GITHUB_NPM_TOKEN'

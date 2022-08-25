@@ -19,11 +19,10 @@ inquirer.prompt([{
     default: "mf-name"
 
 },{
-    name: 'texto',
-    message: 'que queres escribir adentro',
-    default: "prueba"
+    name: 'port',
+    message: 'numero del puerto en local',
+    default: "port"
 }
 ]).then(file => {
-    console.log(file)
   fs.writeFile(`${file.Mf}.js`, `${file.texto}`, (err)=> {if(err){ console.log(err)}}) 
 })
