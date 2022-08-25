@@ -1,8 +1,8 @@
 {
-  "name": "@uma/<%= name %>",
+  "name": "@uma/NAME",
   "scripts": {
-    "serve": "webpack serve --<%= port %> --env isLocal",
-    "watch:portal": "webpack serve --<%= port %>",
+    "serve": "webpack serve --PORT --env isLocal",
+    "watch:portal": "webpack serve --PORT",
     "build:local": "webpack --progress",
     "start:standalone": "webpack serve --env standalone",
     "build": "concurrently yarn:build:*",
@@ -62,7 +62,7 @@
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9"
   },
-  "types": "dist/uma-<%= name %>.d.ts",
+  "types": "dist/uma-NAME.d.ts",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT"
