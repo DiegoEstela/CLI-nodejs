@@ -2,7 +2,6 @@ import inquirer from "inquirer";
 import chalk from "chalk";
 import figlet from "figlet";
 import clear from 'clear'
-import {createMicroFront, renameFiles, AddNameAndPort}  from './script.js'
 import {MicroFront} from './class.js'
 
 
@@ -10,7 +9,7 @@ clear();
 
 console.log(
     chalk.yellow(
-      figlet.textSync('Uma Mf', { horizontalLayout: 'full' })
+      figlet.textSync('New Micro Front', { horizontalLayout: 'full' })
     )
   );
 
@@ -27,10 +26,10 @@ inquirer.prompt([{
 }
 ]).then(async (file) => {
   const createMicroFront = new MicroFront(file.microFrontName, file.port)
-
   await createMicroFront.moveTemplate()
  setTimeout(()=>{
   createMicroFront.renameFiles()
+  createMicroFront.AddNameAndPort()
  }, 1000) 
 
  
