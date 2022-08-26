@@ -29,7 +29,9 @@ inquirer.prompt([{
   await createMicroFront.moveTemplate()
  setTimeout(()=>{
   createMicroFront.renameFiles()
-  createMicroFront.AddNameAndPort()
+  createMicroFront.changeJson()
+  createMicroFront.changeWebpack()
+  createMicroFront.changeTsConfig()
  }, 1000) 
 
  

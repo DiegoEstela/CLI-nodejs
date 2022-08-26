@@ -1,70 +1,90 @@
-import fs from 'fs' 
-import copydir from 'copy-dir'
+import fs from "fs";
+import copydir from "copy-dir";
 
 export class MicroFront {
-
   constructor(name, port) {
-    this.name = name
-    this.port = port
-
+    this.name = name;
+    this.port = port;
   }
 
   async moveTemplate() {
     try {
-        copydir('./template', `./packages/${this.name}`, {
-            utimes: true, 
-            mode: true,   
-            cover: true    
-          }, function(err){
-            if(err) throw err;
-            console.log('create complete!');
-        })
+      copydir("./template",`./packages/${this.name}`,
+        {
+          utimes: true,
+          mode: true,
+          cover: true,
+        },
+        function (err) {
+          if (err) throw err;
+          console.log("create Microfront ✓");
+        }
+      );
     } catch (error) {
-      throw new Error(`Error al guardar: ${error}`)
+      throw new Error(`Error al guardar: ${error}`);
     }
   }
 
-  async renameFiles(){
-    await fs.rename( `./packages/${this.name}/src/uma-template.tsx`, `./packages/${this.name}/src/uma-${this.name}.tsx` ,(err) => {
+  async renameFiles() {
+    await fs.rename(
+      `./packages/${this.name}/src/uma-template.tsx`,
+      `./packages/${this.name}/src/uma-${this.name}.tsx`,
+      (err) => {
         if (err) throw err;
-        console.log('Rename complete!');
-      });
+        console.log("Rename MicroFront ✓");
+      }
+    );
   }
 
-  async whitePackage(file){
+  async writeFiles(path, file) {
     try {
-    await  fs.writeFile(`./packages/${this.name}/package.json`, `${file}`, err => {
+      await fs.writeFile(`${path}`, `${file}`, (err) => {
         if (err) {
           console.error(err);
         }
       });
     } catch (error) {
-      throw new Error(`Error reescribir:`)
+      throw new Error(`Error reescribir: ${path}`);
     }
   }
 
-  async AddNameAndPort() {
-    const jsonPath = `./packages/${this.name}/package.json`;  
+  async changeJson() {
+    const jsonPath = `./packages/${this.name}/package.json`;
     await fs.readFile(jsonPath, "utf-8", (err, data) => {
       if (!err) {
         let newJson = data.replace(/PORT/g, this.port);
         newJson = newJson.replace(/NAME/g, this.name);
-        this.whitePackage(newJson)
+        this.writeFiles(jsonPath, newJson);
+        console.log("write Packages.json ✓");
       } else {
         console.log(err);
       }
-    }
-  )
-
-  const webpackPath = `./packages/webpack.config.js`;
-  await fs.readFile(webpackPath, (err, data) => {
-    if (!err) {
-      console.log(data)
-    } else {
-      console.log(err);
-    }
+    });
   }
-)
-}
-}
 
+  async changeWebpack() {
+    const webpackPath = `./packages/${this.name}/webpack.config.js`;
+    await fs.readFile(webpackPath, "utf-8", (err, data) => {
+      if (!err) {
+        let newWebPack = data.replace(/NAME/g, this.name);
+        this.writeFiles(webpackPath, newWebPack);
+        console.log("write Webpack ✓");
+      } else {
+        console.log(err);
+      }
+    });
+  }
+
+  async changeTsConfig() {
+    const tsConfigPath = `./packages/${this.name}/tsconfig.json`;
+    await fs.readFile(tsConfigPath, "utf-8", (err, data) => {
+      if (!err) {
+        let newTsConfig = data.replace(/NAME/g, this.name);
+        this.writeFiles(tsConfigPath, newTsConfig);
+        console.log("write TsConfig ✓");
+      } else {
+        console.log(err);
+      }
+    });
+  }
+}
