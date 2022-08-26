@@ -7,22 +7,14 @@ export class MicroFront {
     this.port = port;
   }
 
-  async moveTemplate() {
-    try {
-      copydir("./template",`./packages/${this.name}`,
+  moveTemplate() {
+      copydir.sync("./template",`./packages/${this.name}`,
         {
           utimes: true,
           mode: true,
           cover: true,
-        },
-        function (err) {
-          if (err) throw err;
-          console.log("create Microfront ✓");
-        }
-      );
-    } catch (error) {
-      throw new Error(`Error al guardar: ${error}`);
-    }
+        });
+        console.log("Copy Template ✓");
   }
 
   async renameFiles() {
@@ -31,7 +23,7 @@ export class MicroFront {
       `./packages/${this.name}/src/uma-${this.name}.tsx`,
       (err) => {
         if (err) throw err;
-        console.log("Rename MicroFront ✓");
+        console.log("Rename Template ✓");
       }
     );
   }

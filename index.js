@@ -26,14 +26,9 @@ inquirer.prompt([{
 }
 ]).then(async (file) => {
   const createMicroFront = new MicroFront(file.microFrontName, file.port)
-  await createMicroFront.moveTemplate()
- setTimeout(()=>{
+  createMicroFront.moveTemplate()
   createMicroFront.renameFiles()
   createMicroFront.changeJson()
   createMicroFront.changeWebpack()
   createMicroFront.changeTsConfig()
- }, 1000) 
-
- 
-
 })
