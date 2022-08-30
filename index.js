@@ -1,15 +1,15 @@
-import inquirer from "inquirer";
-import chalk from "chalk";
-import figlet from "figlet";
+import inquirer from 'inquirer'
+import chalk from 'chalk'
+import figlet from 'figlet'
 import clear from 'clear'
-import {MicroFront} from './class.js'
+import {MicroFront} from './template.js'
 
 
 clear();
 
 console.log(
     chalk.yellow(
-      figlet.textSync('New Micro Front', { horizontalLayout: 'full' })
+      figlet.textSync('New Micro Front')
     )
   );
 
@@ -17,18 +17,24 @@ console.log(
 inquirer.prompt([{
     name: 'microFrontName',
     message: 'Nombre del Microfront',
-    default: "mf-name"
+    default: 'mf-name'
 
 },{
-    name: 'port',
-    message: 'numero del puerto en local',
-    default: "port"
+  name: 'pathName',
+  message: 'en que ruta queres que se encuentre',
+  default: 'pathName'
 }
 ]).then(async (file) => {
-  const createMicroFront = new MicroFront(file.microFrontName, file.port)
+  const {microFrontName,  pathName} = file
+  const createMicroFront = new MicroFront(microFrontName, pathName)
+  createMicroFront.createPort()
   createMicroFront.moveTemplate()
   createMicroFront.renameFiles()
   createMicroFront.changeJson()
   createMicroFront.changeWebpack()
   createMicroFront.changeTsConfig()
+  createMicroFront.changeImportMap() 
+  createMicroFront.addMfInRootConfig() 
+  createMicroFront.addMfInRootLayaout() 
+  createMicroFront.addMfInRoot()
 })

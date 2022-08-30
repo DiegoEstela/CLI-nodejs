@@ -1,5 +1,5 @@
 {
-  "name": "CliJs",
+  "name": "@umahealth/create-microfront",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
     "Git",
     "CLI"
   ],
-  "author": "Diego Estela",
+  "author": "pkg.module",
   "license": "ISC",
   "dependencies": {
     "@octokit/auth-basic": "^1.4.8",
